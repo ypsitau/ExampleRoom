@@ -18,8 +18,14 @@ public interface UserDao {
 			+ "last_name LIKE :last LIMIT 1")
 	User findByName(String first, String last);
 
+	@Query("SELECT COUNT(*) FROM user")
+	int countAll();
+
 	@Insert
-	void insertAll(User... users);
+	void insert(User user);
+
+	@Insert
+	void insertMulti(User... users);
 
 	@Delete
 	void delete(User user);

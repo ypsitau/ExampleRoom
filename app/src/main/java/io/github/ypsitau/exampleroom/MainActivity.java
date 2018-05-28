@@ -4,9 +4,11 @@ import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -15,15 +17,15 @@ public class MainActivity extends AppCompatActivity {
 	public Button button_add;
 	public Button button_show;
 	public EditText editText_log;
-	private static class AsyncTask_addUsers extends AsyncTask<Void, Void, Void> {
+	private static class AsyncTask_addUsers extends AsyncTask<Void, Void, Integer> {
 		MainActivity mainActivity;
 		public AsyncTask_addUsers(MainActivity mainActivity) {
 			this.mainActivity = mainActivity;
 		}
 
 		@Override
-		protected Void doInBackground(Void... voids) {
-			mainActivity.db.userDao().insertAll(
+		protected Integer doInBackground(Void... voids) {
+			mainActivity.db.userDao().insertMulti(
 					new User("first1", "last1"),
 					new User("first2", "last2"),
 					new User("first3", "last3"),
@@ -32,7 +34,16 @@ public class MainActivity extends AppCompatActivity {
 					new User("first6", "last6"),
 					new User("first7", "last7"),
 					new User("first8", "last8"));
-			return null;
+			return mainActivity.db.userDao().countAll();
+		}
+
+		@Override
+		protected void onPostExecute(Integer n) {
+			Toast toast = Toast.makeText(mainActivity,
+					String.format("Current items:%d", n),
+					Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
 		}
 	}
 	private static class AsyncTask_showUsers extends AsyncTask<Void, Void, Void> {
